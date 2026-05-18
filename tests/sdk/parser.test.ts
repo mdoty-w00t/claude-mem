@@ -1,4 +1,4 @@
-import { describe, it, expect, mock } from 'bun:test';
+import { describe, it, expect, mock , afterAll } from 'bun:test';
 
 mock.module('../../src/services/domain/ModeManager.js', () => ({
   ModeManager: {
@@ -229,4 +229,8 @@ Trailing prose.`;
     // stripper did not eat them.
     expect(result.observations[0].narrative).toContain('```');
   });
+});
+
+afterAll(() => {
+  mock.restore();
 });

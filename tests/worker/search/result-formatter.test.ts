@@ -1,4 +1,4 @@
-import { describe, it, expect, beforeEach, mock } from 'bun:test';
+import { describe, it, expect, beforeEach, mock , afterAll } from 'bun:test';
 
 mock.module('../../../src/services/domain/ModeManager.js', () => ({
   ModeManager: {
@@ -414,4 +414,8 @@ describe('ResultFormatter', () => {
       expect(tips).toContain('orderBy');
     });
   });
+});
+
+afterAll(() => {
+  mock.restore();
 });

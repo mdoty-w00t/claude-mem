@@ -1,4 +1,4 @@
-import { describe, it, expect, beforeEach, mock } from 'bun:test';
+import { describe, it, expect, beforeEach, mock , afterAll } from 'bun:test';
 
 // Singleton enforcement regression coverage for issue #2313.
 //
@@ -225,4 +225,8 @@ describe('ChromaMcpManager singleton enforcement (#2313)', () => {
 // late-arriving microtasks.
 process.on('exit', () => {
   process.kill = realProcessKill;
+});
+
+afterAll(() => {
+  mock.restore();
 });

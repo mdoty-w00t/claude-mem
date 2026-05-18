@@ -1,4 +1,4 @@
-import { describe, it, expect, mock, beforeEach } from 'bun:test';
+import { describe, it, expect, mock, beforeEach , afterAll } from 'bun:test';
 
 mock.module('../../../src/services/domain/ModeManager.js', () => ({
   ModeManager: {
@@ -391,4 +391,8 @@ describe('SearchOrchestrator', () => {
       expect(callArgs[1].files).toEqual('');
     });
   });
+});
+
+afterAll(() => {
+  mock.restore();
 });

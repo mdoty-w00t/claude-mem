@@ -1,5 +1,5 @@
 
-import { describe, it, expect, mock, beforeEach, afterEach, spyOn } from 'bun:test';
+import { describe, it, expect, mock, beforeEach, afterEach, spyOn , afterAll } from 'bun:test';
 import type { Request, Response } from 'express';
 import { logger } from '../../../../src/utils/logger.js';
 
@@ -153,4 +153,8 @@ describe('SearchRoutes Welcome Hint', () => {
       '/path/worktree',
     );
   });
+});
+
+afterAll(() => {
+  mock.restore();
 });

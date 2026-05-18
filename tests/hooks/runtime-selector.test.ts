@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: Apache-2.0
 
-import { describe, it, expect, mock, beforeEach } from 'bun:test';
+import { describe, it, expect, mock, beforeEach , afterAll } from 'bun:test';
 
 let mockSettings: Record<string, string> = {};
 
@@ -91,4 +91,8 @@ describe('runtime-selector', () => {
     expect(matched).toBeDefined();
     expect(matched?.msg).toContain('reason=transport');
   });
+});
+
+afterAll(() => {
+  mock.restore();
 });

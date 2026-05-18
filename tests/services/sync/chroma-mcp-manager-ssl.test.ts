@@ -1,4 +1,4 @@
-import { describe, it, expect, beforeEach, mock } from 'bun:test';
+import { describe, it, expect, beforeEach, mock , afterAll } from 'bun:test';
 
 let currentSettings: Record<string, string> = {};
 
@@ -96,4 +96,8 @@ describe('ChromaMcpManager SSL flag regression (#1286)', () => {
     expect(args).toContain('--client-type');
     expect(args[args.indexOf('--client-type') + 1]).toBe('persistent');
   });
+});
+
+afterAll(() => {
+  mock.restore();
 });

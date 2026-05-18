@@ -242,7 +242,7 @@ describe('readClaudeOAuthToken — Linux branch', () => {
     // If secret-tool is not installed or has no entry, returns absent.
     // If somehow present, we accept that too.
     expect(['present', 'expired', 'absent']).toContain(result.kind);
-  });
+  }, 6500); // secret-tool timeout is 5000ms; give 1.5s buffer
 });
 
 describe('readClaudeOAuthToken — Windows branch', () => {

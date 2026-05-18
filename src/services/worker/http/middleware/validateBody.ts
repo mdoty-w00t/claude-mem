@@ -1,3 +1,4 @@
+import { logger } from '../../../../utils/logger.js';
 
 import type { RequestHandler } from 'express';
 import type { ZodTypeAny } from 'zod';

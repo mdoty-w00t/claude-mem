@@ -1,4 +1,4 @@
-import { describe, it, expect, beforeEach, afterEach, spyOn, mock } from 'bun:test';
+import { describe, it, expect, beforeEach, afterEach, spyOn, mock , afterAll } from 'bun:test';
 import { homedir } from 'os';
 import { join } from 'path';
 
@@ -193,4 +193,8 @@ describe('summarizeHandler — privacy tag stripping', () => {
       expect(body.last_assistant_message).toContain('after');
     });
   }
+});
+
+afterAll(() => {
+  mock.restore();
 });

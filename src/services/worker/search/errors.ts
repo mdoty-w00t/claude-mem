@@ -1,3 +1,4 @@
+import { logger } from '../../../utils/logger.js';
 
 import { AppError } from '../../server/ErrorHandler.js';
 

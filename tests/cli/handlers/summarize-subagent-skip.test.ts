@@ -1,4 +1,4 @@
-import { describe, it, expect, beforeEach, afterEach, spyOn, mock } from 'bun:test';
+import { describe, it, expect, beforeEach, afterEach, spyOn, mock , afterAll } from 'bun:test';
 import { homedir } from 'os';
 import { join } from 'path';
 
@@ -112,4 +112,8 @@ describe('summarizeHandler — subagent short-circuit', () => {
     expect(result.exitCode).toBe(0);
     expect(workerCallLog.length).toBe(0);
   });
+});
+
+afterAll(() => {
+  mock.restore();
 });

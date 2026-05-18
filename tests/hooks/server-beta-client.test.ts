@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: Apache-2.0
 
-import { describe, it, expect, beforeEach, afterEach, mock } from 'bun:test';
+import { describe, it, expect, beforeEach, afterEach, mock , afterAll } from 'bun:test';
 
 mock.module('../../src/shared/worker-utils.js', () => ({
   fetchWithTimeout: async (url: string, init: RequestInit, _timeoutMs: number) => {
@@ -286,4 +286,8 @@ describe('ServerBetaClient', () => {
       limit: 7,
     });
   });
+});
+
+afterAll(() => {
+  mock.restore();
 });

@@ -1,3 +1,4 @@
+import { logger } from '../../utils/logger.js';
 /**
  * Rate limit store — captures `rate_limit` system events emitted by
  * `@anthropic-ai/claude-agent-sdk`'s `query()` stream.

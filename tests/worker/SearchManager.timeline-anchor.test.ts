@@ -1,4 +1,4 @@
-import { describe, it, expect, beforeEach, afterEach, mock } from 'bun:test';
+import { describe, it, expect, beforeEach, afterEach, mock , afterAll } from 'bun:test';
 
 mock.module('../../src/services/domain/ModeManager.js', () => ({
   ModeManager: {
@@ -233,4 +233,8 @@ describe('SearchManager.timeline() anchor dispatch', () => {
     const text: string = response.content[0].text;
     expect(text).toContain('Observation #99999999 not found');
   });
+});
+
+afterAll(() => {
+  mock.restore();
 });

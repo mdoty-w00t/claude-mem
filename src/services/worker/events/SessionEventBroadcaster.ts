@@ -1,3 +1,4 @@
+import { logger } from '../../../utils/logger.js';
 
 import { SSEBroadcaster } from '../SSEBroadcaster.js';
 import type { WorkerService } from '../../worker-service.js';

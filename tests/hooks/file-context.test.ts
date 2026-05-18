@@ -1,5 +1,5 @@
 
-import { describe, it, expect, beforeEach, afterEach, spyOn, mock } from 'bun:test';
+import { describe, it, expect, beforeEach, afterEach, afterAll, spyOn, mock } from 'bun:test';
 import { mkdirSync, mkdtempSync, writeFileSync, utimesSync, rmSync } from 'fs';
 import { tmpdir, homedir } from 'os';
 import { join } from 'path';
@@ -85,6 +85,10 @@ afterEach(() => {
     fetchSpy = null;
   }
   try { rmSync(tmpDir, { recursive: true, force: true }); } catch {}
+});
+
+afterAll(() => {
+  mock.restore();
 });
 
 describe('fileContextHandler — #2094 (no Read mutation)', () => {

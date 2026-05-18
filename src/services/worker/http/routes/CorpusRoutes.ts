@@ -1,3 +1,4 @@
+import { logger } from '../../../../utils/logger.js';
 
 import express, { Request, Response } from 'express';
 import { z } from 'zod';

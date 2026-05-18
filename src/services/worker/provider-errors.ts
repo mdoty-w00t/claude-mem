@@ -1,3 +1,4 @@
+import { logger } from '../../utils/logger.js';
 // F4 foundation: classified provider errors with extensible kind field.
 export type ProviderErrorClass =
   | 'transient'

@@ -1,4 +1,4 @@
-import { describe, it, expect, mock, beforeEach } from 'bun:test';
+import { describe, it, expect, mock, beforeEach , afterAll } from 'bun:test';
 
 mock.module('../../../src/services/domain/ModeManager.js', () => ({
   ModeManager: {
@@ -459,4 +459,8 @@ describe('AgentFormatter', () => {
       expect(result).toContain('# [] recent context,');
     });
   });
+});
+
+afterAll(() => {
+  mock.restore();
 });

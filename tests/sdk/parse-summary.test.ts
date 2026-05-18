@@ -1,4 +1,4 @@
-import { describe, it, expect, mock } from 'bun:test';
+import { describe, it, expect, mock , afterAll } from 'bun:test';
 
 mock.module('../../src/services/domain/ModeManager.js', () => ({
   ModeManager: {
@@ -89,4 +89,8 @@ describe('parseAgentXml — summaries', () => {
     expect(parseAgentXml('').valid).toBe(false);
     expect(parseAgentXml('   \n  ').valid).toBe(false);
   });
+});
+
+afterAll(() => {
+  mock.restore();
 });

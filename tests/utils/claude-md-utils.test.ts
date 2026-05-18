@@ -523,7 +523,7 @@ describe('updateFolderClaudeMdFiles', () => {
   });
 
   it('should handle empty string paths gracefully with projectRoot', async () => {
-    const fetchMock = mock(() => Promise.resolve({ ok: true } as Response));
+    const fetchMock = mock(() => Promise.resolve({ ok: true, json: () => Promise.resolve({}) } as unknown as Response));
     global.fetch = fetchMock;
 
     await updateFolderClaudeMdFiles(

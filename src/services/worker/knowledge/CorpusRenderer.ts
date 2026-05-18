@@ -1,3 +1,4 @@
+import { logger } from '../../../utils/logger.js';
 
 import type { CorpusFile, CorpusObservation, CorpusFilter } from './types.js';
 
