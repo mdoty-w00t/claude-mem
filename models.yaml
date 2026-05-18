@@ -1,0 +1,139 @@
+vram_limit_gb: 25
+default_remote_tier1: gpt-5
+
+remote:
+  - name: gpt-5
+    quality_tier: 1
+    preferred_for: [thinkdeep, analyze, codereview, refactor]
+
+  - name: o3
+    quality_tier: 1
+    preferred_for: [thinkdeep, analyze]
+    notes: best for logical/systematic reasoning
+
+  - name: gpt-4.1
+    quality_tier: 1
+    preferred_for: [codereview, refactor, testgen]
+    notes: 1M context window
+
+  - name: o4-mini
+    quality_tier: 2
+    preferred_for: [analyze, codereview]
+
+  - name: gpt-5-mini
+    quality_tier: 2
+    preferred_for: [precommit, codereview]
+
+  - name: o3-mini
+    quality_tier: 2
+    preferred_for: [analyze]
+
+  - name: gpt-5-nano
+    quality_tier: 3
+    preferred_for: [precommit]
+
+  - name: o3-pro
+    quality_tier: 1
+    preferred_for: [thinkdeep]
+    notes: "⚠️ very expensive — only when explicitly requested"
+
+local:
+  # Abliterated models — no refusals on dangerous patterns; prefer for secaudit
+  - name: "hf.co/mradermacher/DeepSeek-R1-Distill-Qwen-14B-abliterated-v2-GGUF:Q4_K_M"
+    size_gb: 9.0
+    quality_tier: 1
+    abliterated: true
+    preferred_for: [secaudit, analyze]
+
+  - name: "hf.co/mradermacher/Josiefied-Qwen3-8B-abliterated-v1-GGUF:Q4_K_M"
+    size_gb: 5.0
+    quality_tier: 2
+    abliterated: true
+    preferred_for: [secaudit, codereview]
+
+  - name: "hf.co/mradermacher/Huihui-Qwen3.5-9B-abliterated-GGUF:Q4_K_M"
+    size_gb: 6.3
+    quality_tier: 2
+    abliterated: true
+    preferred_for: [secaudit, codereview]
+
+  - name: "ibm-granite-granite-3.3-8b-instruct-abliterated:latest"
+    size_gb: 4.9
+    quality_tier: 2
+    abliterated: true
+    preferred_for: [secaudit]
+
+  - name: "hf.co/mradermacher/Lily-Cybersecurity-7B-v0.2-GGUF:Q4_K_M"
+    size_gb: 4.4
+    quality_tier: 2
+    abliterated: true
+    preferred_for: [secaudit]
+    notes: purpose-built offensive security fine-tune
+
+  # QwQ-30b abliterated — in training, add name/size_gb once available
+  # - name: "TBD"
+  #   size_gb: ~20.0
+  #   quality_tier: 1
+  #   abliterated: true
+  #   preferred_for: [secaudit, thinkdeep, analyze]
+
+  # Standard local models
+  - name: "qwen2.5-coder:14b"
+    size_gb: 9.0
+    quality_tier: 1
+    preferred_for: [codereview, refactor, testgen, precommit]
+
+  - name: "deepseek-r1:14b"
+    size_gb: 9.0
+    quality_tier: 1
+    preferred_for: [thinkdeep, analyze]
+
+  - name: "phi4:14b"
+    size_gb: 9.1
+    quality_tier: 1
+    preferred_for: [analyze, codereview]
+
+  - name: "qwen3:14b"
+    size_gb: 9.3
+    quality_tier: 1
+    preferred_for: [analyze, codereview]
+
+  - name: "gpt-oss:20b"
+    size_gb: 13.0
+    quality_tier: 1
+    preferred_for: [analyze, thinkdeep]
+
+  - name: "mistral-small3.1:latest"
+    size_gb: 15.0
+    quality_tier: 1
+    preferred_for: [codereview, refactor]
+
+  - name: "hf.co/unsloth/Qwen3-Coder-30B-A3B-Instruct-GGUF:Q4_K_M"
+    size_gb: 18.0
+    quality_tier: 1
+    preferred_for: [codereview, refactor]
+
+  - name: "qwen3.5:9b"
+    size_gb: 6.6
+    quality_tier: 2
+    preferred_for: [precommit, codereview]
+
+  - name: "qwen2.5:14b"
+    size_gb: 9.0
+    quality_tier: 2
+    preferred_for: [codereview]
+
+  - name: "llama3.1:8b"
+    size_gb: 4.9
+    quality_tier: 2
+    preferred_for: [precommit]
+
+  - name: "granite3.3:8b"
+    size_gb: 4.9
+    quality_tier: 2
+    preferred_for: [codereview]
+
+  - name: "gemma2:2b"
+    size_gb: 1.6
+    quality_tier: 3
+    preferred_for: [precommit]
