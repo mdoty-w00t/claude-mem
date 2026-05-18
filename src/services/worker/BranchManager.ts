@@ -1,6 +1,6 @@
 
 import { execSync, spawnSync } from 'child_process';
-import { existsSync, unlinkSync } from 'fs';
+import { existsSync, readFileSync, unlinkSync } from 'fs';
 import { join } from 'path';
 import { logger } from '../../utils/logger.js';
 import { MARKETPLACE_ROOT } from '../../shared/paths.js';
@@ -254,3 +254,12 @@ export async function pullUpdates(): Promise<SwitchResult> {
   };
 }
 
+export function detectRequiredRuntime(): 'bun' | 'node' {
+  const pkgPath = join(INSTALLED_PLUGIN_PATH, 'package.json');
+  try {
+    const pkg = JSON.parse(readFileSync(pkgPath, 'utf-8'));
+    const deps = { ...pkg.dependencies, ...pkg.devDependencies };
+    if (deps['better-sqlite3']) return 'node';
+  } catch {}
+  return 'bun';
+}

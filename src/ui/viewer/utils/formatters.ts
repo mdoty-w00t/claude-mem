@@ -1,6 +1,8 @@
 
 export function formatDate(epoch: number): string {
-  return new Date(epoch).toLocaleString();
+  // Epochs stored before the milliseconds migration were in seconds
+  const ms = epoch < 10_000_000_000 ? epoch * 1000 : epoch;
+  return new Date(ms).toLocaleString();
 }
 
 export function formatUptime(seconds?: number): string {

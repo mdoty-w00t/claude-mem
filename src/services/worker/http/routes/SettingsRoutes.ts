@@ -1,12 +1,14 @@
 
 import express, { Request, Response } from 'express';
+import { spawn } from 'child_process';
 import { z } from 'zod';
 import path from 'path';
 import { readFileSync, writeFileSync, existsSync, renameSync, mkdirSync } from 'fs';
 import { getPackageRoot, paths } from '../../../../shared/paths.js';
 import { logger } from '../../../../utils/logger.js';
 import { SettingsManager } from '../../SettingsManager.js';
-import { getBranchInfo, switchBranch, pullUpdates } from '../../BranchManager.js';
+import { getBranchInfo, switchBranch, pullUpdates, detectRequiredRuntime } from '../../BranchManager.js';
+import { resolveWorkerRuntimePath, resolveNodePath } from '../../../infrastructure/ProcessManager.js';
 import { ModeManager } from '../../../domain/ModeManager.js';
 import { BaseRouteHandler } from '../BaseRouteHandler.js';
 import { validateBody } from '../middleware/validateBody.js';
@@ -25,6 +27,23 @@ const switchBranchSchema = z.object({
 }).passthrough();
 
 const updateBranchSchema = z.object({}).passthrough();
+
+function spawnWorkerWithCorrectRuntime(): void {
+  const scriptPath = process.argv[1];
+  const port = parseInt(process.env.CLAUDE_MEM_WORKER_PORT ?? '37700', 10);
+  const runtime = detectRequiredRuntime();
+  const runtimeExec = runtime === 'node'
+    ? (resolveNodePath() ?? 'node')
+    : (resolveWorkerRuntimePath() ?? 'bun');
+  logger.info('WORKER', 'Spawning replacement worker', { runtime, runtimeExec, scriptPath, port });
+  const child = spawn(runtimeExec, [scriptPath, '--daemon'], {
+    detached: true,
+    stdio: 'ignore',
+    windowsHide: true,
+    env: { ...process.env, CLAUDE_MEM_WORKER_PORT: String(port) }
+  });
+  child.unref();
+}
 
 export class SettingsRoutes extends BaseRouteHandler {
   constructor(
@@ -167,6 +186,7 @@ export class SettingsRoutes extends BaseRouteHandler {
     if (result.success) {
       flushResponseThen(res, result, () => {
         logger.info('WORKER', 'Restarting worker after branch switch');
+        spawnWorkerWithCorrectRuntime();
       });
     } else {
       res.json(result);
@@ -181,6 +201,7 @@ export class SettingsRoutes extends BaseRouteHandler {
     if (result.success) {
       flushResponseThen(res, result, () => {
         logger.info('WORKER', 'Restarting worker after branch update');
+        spawnWorkerWithCorrectRuntime();
       });
     } else {
       res.json(result);

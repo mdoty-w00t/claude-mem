@@ -405,10 +405,19 @@ function executeCwdRemap(dbPath: string, effectiveDataDir: string, markerPath: s
   }
 }
 
+export function resolveNodePath(): string | null {
+  const candidates = [process.execPath, 'node', '/usr/bin/node', '/usr/local/bin/node'];
+  for (const c of candidates) {
+    if (c && !isBunExecutablePath(c) && (c === 'node' || existsSync(c))) return c;
+  }
+  return null;
+}
+
 export function spawnDaemon(
   scriptPath: string,
   port: number,
-  extraEnv: Record<string, string> = {}
+  extraEnv: Record<string, string> = {},
+  runtimeOverride?: string
 ): number | undefined {
   getSupervisor().assertCanSpawn('worker daemon');
 
@@ -418,11 +427,11 @@ export function spawnDaemon(
     ...extraEnv
   });
 
-  const runtimePath = resolveWorkerRuntimePath();
+  const runtimePath = runtimeOverride ?? resolveWorkerRuntimePath();
   if (!runtimePath) {
     logger.error(
       'SYSTEM',
-      'Bun runtime not found — install from https://bun.sh and ensure it is on PATH or set BUN env var. The worker daemon requires Bun because it uses bun:sqlite.'
+      'Runtime not found — ensure bun or node is on PATH.'
     );
     return undefined;
   }
