@@ -88,14 +88,14 @@ describe('SettingsDefaultsManager', () => {
       it('should return parsed content when file has valid JSON', () => {
         const customSettings = {
           CLAUDE_MEM_MODEL: 'custom-model',
-          CLAUDE_MEM_WORKER_PORT: '12345',
+          CLAUDE_MEM_LOG_LEVEL: 'DEBUG',
         };
         writeFileSync(settingsPath, JSON.stringify(customSettings));
 
         const result = SettingsDefaultsManager.loadFromFile(settingsPath);
 
         expect(result.CLAUDE_MEM_MODEL).toBe('custom-model');
-        expect(result.CLAUDE_MEM_WORKER_PORT).toBe('12345');
+        expect(result.CLAUDE_MEM_LOG_LEVEL).toBe('DEBUG');
       });
 
       it('should merge file settings with defaults for missing keys', () => {
@@ -195,7 +195,7 @@ describe('SettingsDefaultsManager', () => {
         const nestedSettings = {
           env: {
             CLAUDE_MEM_MODEL: 'nested-model',
-            CLAUDE_MEM_WORKER_PORT: '54321',
+            CLAUDE_MEM_LOG_LEVEL: 'DEBUG',
           },
         };
         writeFileSync(settingsPath, JSON.stringify(nestedSettings));
@@ -203,7 +203,7 @@ describe('SettingsDefaultsManager', () => {
         const result = SettingsDefaultsManager.loadFromFile(settingsPath);
 
         expect(result.CLAUDE_MEM_MODEL).toBe('nested-model');
-        expect(result.CLAUDE_MEM_WORKER_PORT).toBe('54321');
+        expect(result.CLAUDE_MEM_LOG_LEVEL).toBe('DEBUG');
       });
 
       it('should auto-migrate file from nested to flat schema', () => {
@@ -285,7 +285,7 @@ describe('SettingsDefaultsManager', () => {
 
   describe('get', () => {
     it('should return default value for key', () => {
-      expect(SettingsDefaultsManager.get('CLAUDE_MEM_MODEL')).toBe('claude-sonnet-4-6');
+      expect(SettingsDefaultsManager.get('CLAUDE_MEM_MODEL')).toBe('claude-haiku-4-5-20251001');
       const expectedPort = String(37700 + ((process.getuid?.() ?? 77) % 100));
       expect(SettingsDefaultsManager.get('CLAUDE_MEM_WORKER_PORT')).toBe(expectedPort);
     });

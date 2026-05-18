@@ -1,4 +1,8 @@
 import { Database } from 'bun:sqlite';
+import { execFileSync } from 'child_process';
+import { existsSync, unlinkSync, writeFileSync } from 'fs';
+import { tmpdir } from 'os';
+import { join } from 'path';
 import { DATA_DIR, DB_PATH, ensureDir } from '../../shared/paths.js';
 import { logger } from '../../utils/logger.js';
 import { MigrationRunner } from './migrations/runner.js';
@@ -23,6 +27,7 @@ export class ClaudeMemDatabase {
     }
 
     this.db = new Database(dbPath, { create: true, readwrite: true });
+    this.db = ClaudeMemDatabase.repairIfMalformed(dbPath, this.db);
 
     this.db.run('PRAGMA journal_mode = WAL');
     this.db.run('PRAGMA synchronous = NORMAL');
@@ -33,6 +38,51 @@ export class ClaudeMemDatabase {
 
     const migrationRunner = new MigrationRunner(this.db);
     migrationRunner.runAllMigrations();
+  }
+
+  // bun:sqlite cannot DELETE FROM sqlite_master even with writable_schema = ON,
+  // so we shell out to Python which uses a lower-level API that allows it.
+  private static repairIfMalformed(dbPath: string, db: Database): Database {
+    if (dbPath === ':memory:' || dbPath === '') return db;
+    try {
+      db.query('SELECT name FROM sqlite_master WHERE type = "table" LIMIT 1').all();
+      return db;
+    } catch (error: unknown) {
+      const message = error instanceof Error ? error.message : String(error);
+      if (!message.includes('malformed database schema')) throw error;
+
+      const match = message.match(/malformed database schema \(([^)]+)\)/);
+      if (!match) throw error;
+
+      const objectName = match[1];
+      logger.warn('DB', `Malformed schema object "${objectName}", repairing via Python`, {});
+      db.close();
+
+      const scriptPath = join(tmpdir(), `claude-mem-repair-${Date.now()}.py`);
+      try {
+        writeFileSync(scriptPath, `
+import sqlite3, sys
+db_path = sys.argv[1]
+obj_name = sys.argv[2]
+c = sqlite3.connect(db_path)
+c.execute('PRAGMA writable_schema = ON')
+c.execute('DELETE FROM sqlite_master WHERE name = ?', (obj_name,))
+c.execute('PRAGMA writable_schema = OFF')
+has_sv = c.execute("SELECT count(*) FROM sqlite_master WHERE type='table' AND name='schema_versions'").fetchone()[0]
+if has_sv:
+  c.execute('DELETE FROM schema_versions')
+c.commit()
+c.close()
+`);
+        execFileSync('python3', [scriptPath, dbPath, objectName], { timeout: 10000 });
+        logger.info('DB', `Repaired schema object "${objectName}", migrations will re-run`, {});
+      } finally {
+        if (existsSync(scriptPath)) unlinkSync(scriptPath);
+      }
+
+      const newDb = new Database(dbPath, { create: true, readwrite: true });
+      return ClaudeMemDatabase.repairIfMalformed(dbPath, newDb);
+    }
   }
 
   close(): void {

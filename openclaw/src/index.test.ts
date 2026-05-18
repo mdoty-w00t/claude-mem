@@ -302,12 +302,12 @@ describe("Observation I/O event handlers", () => {
     workerServer?.close();
   });
 
-  it("session_start sends session init to worker", async () => {
+  it("before_agent_start sends session init to worker", async () => {
     const { api, logs, fireEvent } = createMockApi({ workerPort });
     claudeMemPlugin(api);
 
-    await fireEvent("session_start", {
-      sessionId: "test-session-1",
+    await fireEvent("before_agent_start", {
+      prompt: "hello",
     }, { sessionKey: "agent-1" });
 
     await new Promise((resolve) => setTimeout(resolve, 100));
@@ -319,26 +319,27 @@ describe("Observation I/O event handlers", () => {
     assert.ok(logs.some((l) => l.includes("Session initialized")));
   });
 
-  it("session_start calls init on worker", async () => {
+  it("before_agent_start calls init on worker", async () => {
     const { api, fireEvent } = createMockApi({ workerPort });
     claudeMemPlugin(api);
 
-    await fireEvent("session_start", { sessionId: "test-session-1" }, {});
+    await fireEvent("before_agent_start", { prompt: "test prompt" }, {});
     await new Promise((resolve) => setTimeout(resolve, 100));
 
     const initRequests = receivedRequests.filter((r) => r.url === "/api/sessions/init");
-    assert.equal(initRequests.length, 1, "should init on session_start");
+    assert.equal(initRequests.length, 1, "should init on before_agent_start");
   });
 
-  it("after_compaction re-inits session on worker", async () => {
-    const { api, fireEvent } = createMockApi({ workerPort });
+  it("after_compaction logs session preservation (no re-init)", async () => {
+    const { api, logs, fireEvent } = createMockApi({ workerPort });
     claudeMemPlugin(api);
 
     await fireEvent("after_compaction", { messageCount: 5, compactedCount: 3 }, {});
     await new Promise((resolve) => setTimeout(resolve, 100));
 
     const initRequests = receivedRequests.filter((r) => r.url === "/api/sessions/init");
-    assert.equal(initRequests.length, 1, "should re-init after compaction");
+    assert.equal(initRequests.length, 0, "after_compaction should not send init");
+    assert.ok(logs.some((l) => l.includes("preserved after compaction")), "should log compaction");
   });
 
   it("before_agent_start calls init for session privacy check", async () => {
@@ -356,16 +357,13 @@ describe("Observation I/O event handlers", () => {
     const { api, fireEvent } = createMockApi({ workerPort });
     claudeMemPlugin(api);
 
-    await fireEvent("session_start", { sessionId: "s1" }, { sessionKey: "test-agent" });
-    await new Promise((resolve) => setTimeout(resolve, 100));
-
     await fireEvent("tool_result_persist", {
       toolName: "Read",
       params: { file_path: "/src/index.ts" },
       message: {
         content: [{ type: "text", text: "file contents here..." }],
       },
-    }, { sessionKey: "test-agent" });
+    }, { sessionKey: "test-agent", workspaceDir: "/test/workspace" });
 
     await new Promise((resolve) => setTimeout(resolve, 100));
 
@@ -403,7 +401,7 @@ describe("Observation I/O event handlers", () => {
       message: {
         content: [{ type: "text", text: longText }],
       },
-    }, {});
+    }, { workspaceDir: "/test/workspace" });
 
     await new Promise((resolve) => setTimeout(resolve, 100));
 
@@ -467,7 +465,7 @@ describe("Observation I/O event handlers", () => {
     const { api, fireEvent } = createMockApi({ workerPort, project: "my-project" });
     claudeMemPlugin(api);
 
-    await fireEvent("session_start", { sessionId: "s1" }, {});
+    await fireEvent("before_agent_start", { prompt: "test" }, {});
     await new Promise((resolve) => setTimeout(resolve, 100));
 
     const initRequest = receivedRequests.find((r) => r.url === "/api/sessions/init");
@@ -503,14 +501,14 @@ describe("Observation I/O event handlers", () => {
     const { api, fireEvent } = createMockApi({ workerPort });
     claudeMemPlugin(api);
 
-    await fireEvent("session_start", { sessionId: "s1" }, { sessionKey: "reuse-test" });
+    await fireEvent("before_agent_start", { prompt: "test" }, { sessionKey: "reuse-test" });
     await new Promise((resolve) => setTimeout(resolve, 100));
 
     await fireEvent("tool_result_persist", {
       toolName: "Read",
       params: { file_path: "/src/index.ts" },
       message: { content: [{ type: "text", text: "contents" }] },
-    }, { sessionKey: "reuse-test" });
+    }, { sessionKey: "reuse-test", workspaceDir: "/test/workspace" });
 
     await new Promise((resolve) => setTimeout(resolve, 100));
 

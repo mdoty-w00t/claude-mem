@@ -30,6 +30,7 @@ const workerCallLog: Array<{ path: string; method: string; body: any }> = [];
 mock.module('../../../src/shared/worker-utils.js', () => ({
   ensureWorkerRunning: () => Promise.resolve(true),
   getWorkerPort: () => 37777,
+  fetchWithTimeout: (url: string, init?: RequestInit) => Promise.resolve(new Response('{"status":"queued"}', { status: 200 })),
   workerHttpRequest: (apiPath: string, options?: any) => {
     workerCallLog.push({ path: apiPath, method: options?.method ?? 'GET', body: options?.body });
     return Promise.resolve(new Response('{"status":"queued"}', { status: 200 }));

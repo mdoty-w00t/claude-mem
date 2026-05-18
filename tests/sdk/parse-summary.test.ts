@@ -32,10 +32,10 @@ describe('parseAgentXml — summaries', () => {
     const text = `<summary><request>Fix the bug</request></summary>`;
     const result = parseAgentXml(text);
     expect(result.valid).toBe(true);
-    if (result.valid && result.kind === 'summary') {
-      expect(result.data.request).toBe('Fix the bug');
-      expect(result.data.investigated).toBeNull();
-      expect(result.data.learned).toBeNull();
+    if (result.valid && result.summary !== null) {
+      expect(result.summary.request).toBe('Fix the bug');
+      expect(result.summary.investigated).toBeNull();
+      expect(result.summary.learned).toBeNull();
     }
   });
 
@@ -49,21 +49,21 @@ describe('parseAgentXml — summaries', () => {
     </summary>`;
     const result = parseAgentXml(text);
     expect(result.valid).toBe(true);
-    if (result.valid && result.kind === 'summary') {
-      expect(result.data.request).toBe('Fix login bug');
-      expect(result.data.investigated).toBe('Auth flow and JWT expiry');
-      expect(result.data.learned).toBe('Token was expiring too soon');
-      expect(result.data.completed).toBe('Extended token TTL to 24h');
-      expect(result.data.next_steps).toBe('Monitor error rates');
+    if (result.valid && result.summary !== null) {
+      expect(result.summary.request).toBe('Fix login bug');
+      expect(result.summary.investigated).toBe('Auth flow and JWT expiry');
+      expect(result.summary.learned).toBe('Token was expiring too soon');
+      expect(result.summary.completed).toBe('Extended token TTL to 24h');
+      expect(result.summary.next_steps).toBe('Monitor error rates');
     }
   });
 
   it('treats <skip_summary reason="…"/> as a first-class summary with skipped:true', () => {
     const result = parseAgentXml('<skip_summary reason="no work done"/>');
     expect(result.valid).toBe(true);
-    if (result.valid && result.kind === 'summary') {
-      expect(result.data.skipped).toBe(true);
-      expect(result.data.skip_reason).toBe('no work done');
+    if (result.valid && result.summary !== null) {
+      expect(result.summary.skipped).toBe(true);
+      expect(result.summary.skip_reason).toBe('no work done');
     }
   });
 
@@ -71,7 +71,7 @@ describe('parseAgentXml — summaries', () => {
     const result = parseAgentXml('<observation><title>foo</title></observation>');
     expect(result.valid).toBe(true);
     if (result.valid) {
-      expect(result.kind).toBe('observation');
+      expect(result.observations.length).toBeGreaterThan(0);
     }
   });
 
@@ -81,7 +81,7 @@ describe('parseAgentXml — summaries', () => {
     const result = parseAgentXml(text);
     expect(result.valid).toBe(true);
     if (result.valid) {
-      expect(result.kind).toBe('observation');
+      expect(result.observations.length).toBeGreaterThan(0);
     }
   });
 

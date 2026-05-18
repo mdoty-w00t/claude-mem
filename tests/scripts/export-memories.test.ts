@@ -6,6 +6,7 @@ import { join } from 'path';
 const originalFetch = globalThis.fetch;
 const originalDataDir = process.env.CLAUDE_MEM_DATA_DIR;
 const originalNoMain = process.env.CLAUDE_MEM_EXPORT_MEMORIES_NO_MAIN;
+const originalWorkerPort = process.env.CLAUDE_MEM_WORKER_PORT;
 
 describe('export-memories script', () => {
   let tempDir: string | undefined;
@@ -26,6 +27,12 @@ describe('export-memories script', () => {
       process.env.CLAUDE_MEM_EXPORT_MEMORIES_NO_MAIN = originalNoMain;
     }
 
+    if (originalWorkerPort === undefined) {
+      delete process.env.CLAUDE_MEM_WORKER_PORT;
+    } else {
+      process.env.CLAUDE_MEM_WORKER_PORT = originalWorkerPort;
+    }
+
     consoleSpies.splice(0).forEach(spy => spy.mockRestore());
 
     if (tempDir && existsSync(tempDir)) {
@@ -40,6 +47,7 @@ describe('export-memories script', () => {
     tempDir = mkdtempSync(join(tmpdir(), 'claude-mem-export-'));
     process.env.CLAUDE_MEM_DATA_DIR = tempDir;
     process.env.CLAUDE_MEM_EXPORT_MEMORIES_NO_MAIN = '1';
+    delete process.env.CLAUDE_MEM_WORKER_PORT;
     writeFileSync(join(tempDir, 'settings.json'), JSON.stringify({
       CLAUDE_MEM_WORKER_PORT: '45678',
     }));
@@ -103,6 +111,7 @@ describe('export-memories script', () => {
     tempDir = mkdtempSync(join(tmpdir(), 'claude-mem-export-'));
     process.env.CLAUDE_MEM_DATA_DIR = tempDir;
     process.env.CLAUDE_MEM_EXPORT_MEMORIES_NO_MAIN = '1';
+    delete process.env.CLAUDE_MEM_WORKER_PORT;
     writeFileSync(join(tempDir, 'settings.json'), JSON.stringify({
       CLAUDE_MEM_WORKER_PORT: '45678abc',
     }));
@@ -122,6 +131,7 @@ describe('export-memories script', () => {
     tempDir = mkdtempSync(join(tmpdir(), 'claude-mem-export-'));
     process.env.CLAUDE_MEM_DATA_DIR = tempDir;
     process.env.CLAUDE_MEM_EXPORT_MEMORIES_NO_MAIN = '1';
+    delete process.env.CLAUDE_MEM_WORKER_PORT;
     writeFileSync(join(tempDir, 'settings.json'), JSON.stringify({
       CLAUDE_MEM_WORKER_PORT: '',
     }));
@@ -141,6 +151,7 @@ describe('export-memories script', () => {
     tempDir = mkdtempSync(join(tmpdir(), 'claude-mem-export-'));
     process.env.CLAUDE_MEM_DATA_DIR = tempDir;
     process.env.CLAUDE_MEM_EXPORT_MEMORIES_NO_MAIN = '1';
+    delete process.env.CLAUDE_MEM_WORKER_PORT;
     writeFileSync(join(tempDir, 'settings.json'), JSON.stringify({
       CLAUDE_MEM_WORKER_PORT: 45678,
     }));
@@ -160,6 +171,7 @@ describe('export-memories script', () => {
     tempDir = mkdtempSync(join(tmpdir(), 'claude-mem-export-'));
     process.env.CLAUDE_MEM_DATA_DIR = tempDir;
     process.env.CLAUDE_MEM_EXPORT_MEMORIES_NO_MAIN = '1';
+    delete process.env.CLAUDE_MEM_WORKER_PORT;
     writeFileSync(join(tempDir, 'settings.json'), JSON.stringify({
       CLAUDE_MEM_WORKER_PORT: '45678',
     }));
@@ -204,6 +216,7 @@ describe('export-memories script', () => {
     tempDir = mkdtempSync(join(tmpdir(), 'claude-mem-export-'));
     process.env.CLAUDE_MEM_DATA_DIR = tempDir;
     process.env.CLAUDE_MEM_EXPORT_MEMORIES_NO_MAIN = '1';
+    delete process.env.CLAUDE_MEM_WORKER_PORT;
     writeFileSync(join(tempDir, 'settings.json'), JSON.stringify({
       CLAUDE_MEM_WORKER_PORT: '45678',
     }));
