@@ -14,7 +14,7 @@
 //      `api_keys` with the scopes hooks need: events:write, sessions:write,
 //      observations:read, jobs:read.
 //   4. Persist the plaintext key to ~/.claude-mem/settings.json under
-//      `CLAUDE_MEM_SERVER_BETA_API_KEY`, then chmod that file to 0600 so
+//      `CLAUDE_MEM_SERVER_API_KEY`, then chmod that file to 0600 so
 //      only the owner can read it.
 //
 // The plaintext key is NEVER written into the generated bundle and never
@@ -144,10 +144,10 @@ export function persistServerBetaSettings(
     ? existing.env
     : existing) as Record<string, unknown>;
 
-  flat.CLAUDE_MEM_SERVER_BETA_API_KEY = values.apiKey;
-  flat.CLAUDE_MEM_SERVER_BETA_PROJECT_ID = values.projectId;
+  flat.CLAUDE_MEM_SERVER_API_KEY = values.apiKey;
+  flat.CLAUDE_MEM_SERVER_PROJECT_ID = values.projectId;
   if (values.serverBaseUrl) {
-    flat.CLAUDE_MEM_SERVER_BETA_URL = values.serverBaseUrl;
+    flat.CLAUDE_MEM_SERVER_URL = values.serverBaseUrl;
   }
 
   writeFileSync(settingsPath, JSON.stringify(flat, null, 2), 'utf-8');

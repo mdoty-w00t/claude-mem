@@ -150,7 +150,7 @@ async function runServerBetaKeysRotateCommand(): Promise<void> {
     try {
       const raw = JSON.parse(readFileSync(settingsPath, 'utf-8')) as Record<string, unknown>;
       const flat = (raw.env && typeof raw.env === 'object' ? raw.env : raw) as Record<string, unknown>;
-      const previousKey = flat.CLAUDE_MEM_SERVER_BETA_API_KEY;
+      const previousKey = flat.CLAUDE_MEM_SERVER_API_KEY;
       if (typeof previousKey === 'string' && previousKey.length > 0) {
         previousApiKeyId = await lookupApiKeyIdByPlaintext(previousKey);
       }

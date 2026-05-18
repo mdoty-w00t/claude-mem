@@ -330,7 +330,7 @@ export class ServerBetaClient {
     if (!this.apiKey || !this.apiKey.trim()) {
       throw new ServerBetaClientError(
         'missing_api_key',
-        'Server beta API key is not configured (CLAUDE_MEM_SERVER_BETA_API_KEY).',
+        'Server beta API key is not configured (CLAUDE_MEM_SERVER_API_KEY).',
       );
     }
 

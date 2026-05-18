@@ -38,9 +38,9 @@ export function selectRuntime(): SelectedRuntime {
 
 export function buildServerBetaContext(): ServerBetaRuntimeContext | null {
   const settings = loadFromFileOnce();
-  const serverBaseUrl = (settings.CLAUDE_MEM_SERVER_BETA_URL ?? '').trim();
-  const apiKey = (settings.CLAUDE_MEM_SERVER_BETA_API_KEY ?? '').trim();
-  const projectId = (settings.CLAUDE_MEM_SERVER_BETA_PROJECT_ID ?? '').trim();
+  const serverBaseUrl = (settings.CLAUDE_MEM_SERVER_URL ?? '').trim();
+  const apiKey = (settings.CLAUDE_MEM_SERVER_API_KEY ?? '').trim();
+  const projectId = (settings.CLAUDE_MEM_SERVER_PROJECT_ID ?? '').trim();
 
   if (!serverBaseUrl) {
     logger.warn('HOOK', '[server-beta-fallback] reason=missing_base_url');
